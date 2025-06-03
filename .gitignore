@@ -1,0 +1,6 @@
+PACK_HB
+config.json
+conversions.json
+conversion_report.md
+__pycache__
+.vscode

@@ -1,0 +1,147 @@
+{
+  "file_mapping": [
+    {
+      "original_path": "",
+      "target_namespace": "",
+      "target_ressource_root_relative_path": ""
+    }
+  ],
+  "file_mapping_regex": [
+    ////////////////////////////////
+    // Sous catégories herobrine
+    ////////////////////////////////
+    {
+      "original_path": "assets/minecraft/optifine/cit/animations/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "animations"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/blocks/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "blocks"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/nourriture/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "nourriture"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/drogues/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "drogue"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/drogues/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "drogues"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/tableaux/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "tableaux"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/outils/reliques/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "reliques_TOREVIEW"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/outils/instruments_musique/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "instruments_musique"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/outils/pieces/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "monnaies"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/outils/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "utilitaires"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/gui/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "gui"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/staff/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "player_specific"
+    },
+
+    ////////////////////////////////
+    // Namespaces de divers par défaut
+    ////////////////////////////////
+    {
+      "original_path": "assets/miniaturia/.*",
+      "target_namespace": "miniaturia",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/modelengine/.*",
+      "target_namespace": "modelengine_TOREVIEW",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/space/.*",
+      "target_namespace": "space_TOREVIEW",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/cocricot/.*",
+      "target_namespace": "cocricot_TOREVIEW",
+      "target_ressource_root_relative_path": "."
+    },
+    
+    ////////////////////////////////
+    // Namespaces de guildes par défaut
+    ////////////////////////////////
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/theoriciens/.*",
+      "target_namespace": "collectif_radiant",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/division_cristalline/.*",
+      "target_namespace": "division_cristalline",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/thurges/.*",
+      "target_namespace": "thurgie",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/garde/.*",
+      "target_namespace": "garde",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/sacerdoce/.*",
+      "target_namespace": "sacerdoce",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/.*",
+      "target_namespace": "harde",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/dementium/.*",
+      "target_namespace": "dementium",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/compagnie/.*",
+      "target_namespace": "compagnie",
+      "target_ressource_root_relative_path": "."
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/arbitres/.*",
+      "target_namespace": "concile",
+      "target_ressource_root_relative_path": "."
+    }
+  ]
+} 
