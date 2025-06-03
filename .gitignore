@@ -1,5 +1,5 @@
 PACK_HB
-config.json
+./config.json
 conversions.json
 conversion_report.md
 __pycache__
