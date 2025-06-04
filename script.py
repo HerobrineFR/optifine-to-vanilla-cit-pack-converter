@@ -1081,33 +1081,29 @@ class CIT:
             if retour_blocking is None:
                 retour_blocking = {
                     "model": {
-                        "type": "minecraft:special",
-                        "base": "minecraft:item/shield_blocking",
-                        "model": {"type": "minecraft:shield"}
+                        "type": "minecraft:model",
+                        "model": "minecraft:item/shield_blocking"
                     }
                 }
             else:
                 retour_blocking = {
                     "model": {
-                        "type": "minecraft:special",
-                        "base": retour_blocking["model"]["model"],
-                        "model": {"type": "minecraft:shield"}
+                        "type": "minecraft:model",
+                        "model": retour_blocking["model"]["model"]
                     }
                 }
             if retour_normal is None:
                 retour_normal = {
                     "model": {
-                        "type": "minecraft:special",
-                        "base": "minecraft:item/shield",
-                        "model": {"type": "minecraft:shield"}
+                        "type": "minecraft:model",
+                        "model": "minecraft:item/shield"
                     }
                 }
             else:
                 retour_normal = {
                     "model": {
-                        "type": "minecraft:special",
-                        "base": retour_normal["model"]["model"],
-                        "model": {"type": "minecraft:shield"}
+                        "type": "minecraft:model",
+                        "model": retour_normal["model"]["model"]
                     }
                 }
             return {
