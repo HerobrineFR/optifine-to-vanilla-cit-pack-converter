@@ -845,7 +845,7 @@ class CIT:
             base_file_2 = self.property_file_path.parent.parent / "models" / f"{base_name}.properties"
             if not (base_file_1.exists() or base_file_2.exists()):
                 CIT.cit_icon_orphelin.append(self.property_file_path)
-            return
+                
         # Initialisation de l'organisation pour tous les autres cas
         type_value = self.properties.get('type', '')
         if type_value in ('armor', 'elytra'):
