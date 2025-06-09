@@ -69,7 +69,7 @@ def find_file_in_pack(root_path, relative_path: str, extension=None):
 
             # Vérifie si le fichier existe
             if os.path.exists(full_path):
-                return full_path
+                return str(os.path.realpath(full_path))
     
     # Si aucun chemin n'a fonctionné, retourne None
     return None
@@ -111,7 +111,7 @@ def read_properties_file(file_path: str | Path) -> dict[str, str]:
     """
     properties = {}
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, 'r', encoding='latin-1') as f:
             for line in f:
                 line = line.strip()
                 # Ignore les lignes vides et les commentaires

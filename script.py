@@ -11,6 +11,7 @@ import json5
 import shutil
 from utils import create_markdown_link, read_properties_file, find_file_in_pack, get_all_cit_properties
 import re
+import hashlib
 
 # Chargement de la configuration
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -19,11 +20,13 @@ OUTPUT_PATH = Path(config['output_path'])
 
 def clean_output_directory() -> None:
     """
-    Supprime le répertoire de sortie s'il existe et le recrée vide.
+    Supprime les sous-répertoires spécifiés dans OUTPUT_PATH s'ils existent.
     """
-    if OUTPUT_PATH.exists():
-        shutil.rmtree(OUTPUT_PATH)
-    OUTPUT_PATH.mkdir(parents=True)
+    for subdir in ["equipment", "items", "models", "textures"]:
+        for path in OUTPUT_PATH.glob(f"assets/*/{subdir}"):
+            if path.exists():
+                shutil.rmtree(path)
+            path.parent.mkdir(parents=True, exist_ok=True)
 
 class ConversionError(Exception):
     """
@@ -58,7 +61,7 @@ class JsonModel:
     # Cache des instances JsonModel
     _instances: dict[Path, 'JsonModel'] = {}
     # Cache des noms de fichiers sans extension
-    _file_names: dict[str, Path] = {}
+    _cache: dict[str, list['JsonModel']] = {}
     
     json_path: Path
     has_not_found_textures: bool
@@ -85,10 +88,16 @@ class JsonModel:
         
         # Vérification du nom de fichier sans extension
         file_name = self.output_name
-        if file_name in JsonModel._file_names and JsonModel._file_names[file_name] != self.json_path:
-            raise JsonModelError(self, f"Un autre fichier JSON avec le même nom '{file_name}' existe déjà : {JsonModel._file_names[file_name]}")
-        JsonModel._file_names[file_name] = self.json_path
+        
         self.validation()
+        
+        if file_name in JsonModel._cache:
+            if any(self.organization.has_conflict_with(other.organization) for other in JsonModel._cache[file_name]):
+                conflict = next(other for other in JsonModel._cache[file_name] if self.organization.has_conflict_with(other.organization))
+                raise JsonModelError(self, f"Un autre fichier avec le même nom, dans le même namespace et même chemin, existe déjà : {conflict.organization.target_namespace}:{conflict.organization.target_ressource_root_relative_path}/{file_name}")
+            JsonModel._cache[file_name].append(self)
+        else:
+            JsonModel._cache[file_name] = [self]
     
     @classmethod
     def getJsonModel(cls, json_path: str | Path, specific_suffix: str = "") -> 'JsonModel':
@@ -103,7 +112,7 @@ class JsonModel:
             JsonModel: Instance de JsonModel pour le chemin donné
         """
         json_path = Path(json_path)
-        key = (json_path, specific_suffix)
+        key = str(json_path) + specific_suffix
         if key not in cls._instances:
             cls._instances[key] = cls(json_path, specific_suffix)
         return cls._instances[key]
@@ -243,9 +252,25 @@ class PNG:
     # Cache des instances PNG
     _instances: dict[Path, 'PNG'] = {}
     # Cache des noms de fichiers sans extension
-    _file_names: dict[str, Path] = {}
+    _hash_cache: dict[str, list[str]] = {}
+    _cache: dict[str, list['PNG']] = {}
     
     png_path: Path
+    
+    @staticmethod
+    def file_hash(file_path):
+        # https://stackoverflow.com/questions/22058048/hashing-a-file-in-python
+
+        sha256 = hashlib.sha256()
+
+        with open(file_path, "rb") as f:
+            while True:
+                data = f.read(65536) # arbitrary number to reduce RAM usage
+                if not data:
+                    break
+                sha256.update(data)
+
+        return sha256.hexdigest()
     
     def __init__(self, png_path: str | Path):
         """
@@ -258,12 +283,21 @@ class PNG:
             PNGError: Si un autre fichier PNG avec le même nom (sans extension) existe déjà
         """
         self.png_path = Path(png_path)
+        self.organization = Organization.get_organization(self.png_path)
         # Vérification du nom de fichier sans extension
         file_name = self.png_path.stem
-        if file_name in PNG._file_names and PNG._file_names[file_name] != self.png_path:
-            raise PNGError(self, f"Un autre fichier PNG avec le même nom '{file_name}' existe déjà : {PNG._file_names[file_name]}")
-        PNG._file_names[file_name] = self.png_path
-        self.organization = Organization.get_organization(self.png_path)
+        if file_name in PNG._cache:
+            if any(self.organization.has_conflict_with(other.organization) for other in PNG._cache[file_name]):
+                conflict = next(other for other in PNG._cache[file_name] if self.organization.has_conflict_with(other.organization))
+                raise PNGError(self, f"Un autre fichier PNG avec le même nom '{file_name}' existe déjà : {conflict.organization.target_namespace}:{conflict.organization.target_ressource_root_relative_path}/{file_name}")
+            PNG._cache[file_name].append(self)
+        else:
+            PNG._cache[file_name] = [self]
+        self.hash = self.file_hash(self.png_path)
+        if self.hash in PNG._hash_cache:
+            PNG._hash_cache[self.hash].append(self.png_path)
+        else:
+            PNG._hash_cache[self.hash] = [self.png_path]
     
     @classmethod
     def getPNG(cls, png_path: str | Path) -> 'PNG':
@@ -336,14 +370,22 @@ class GenericJsonModel:
         self.specific_suffix = specific_suffix
         base_output = f"{self.properties_name}_from_{self.item_name}"
         self.output_name = f"{base_output}_{specific_suffix}" if specific_suffix else base_output
-        # Vérification des conflits de nom avec JsonModel
-        if self.output_name in JsonModel._file_names and JsonModel._file_names[self.output_name] != Path(self.output_name):
-            raise JsonModelError(self, f"Un modèle JSON avec le même nom '{self.output_name}' existe déjà : {JsonModel._file_names[self.output_name]}")
-        JsonModel._file_names[self.output_name] = Path(self.output_name)
         if organization is None:
             self.organization = Organization.get_organization(self.output_name)
         else:
             self.organization = organization
+        # Vérification des conflits de nom avec JsonModel
+        # if self.output_name in JsonModel._file_names and JsonModel._file_names[self.output_name] != Path(self.output_name):
+        #     raise JsonModelError(self, f"Un modèle JSON avec le même nom '{self.output_name}' existe déjà : {JsonModel._file_names[self.output_name]}")
+        # JsonModel._file_names[self.output_name] = Path(self.output_name)
+        if self.output_name in JsonModel._cache:
+            if any(self.organization.has_conflict_with(other.organization) for other in JsonModel._cache[self.output_name]):
+                # first conflict
+                conflict = next(other for other in JsonModel._cache[self.output_name] if self.organization.has_conflict_with(other.organization))
+                raise JsonModelError(self, f"Un modèle avec le même nom, dans le même namespace et même chemin, existe déjà : {conflict.organization.target_namespace}:{conflict.organization.target_ressource_root_relative_path}/{self.output_name}")
+            JsonModel._cache[self.output_name].append(self)
+        else:
+            JsonModel._cache[self.output_name] = [self]
     
     @classmethod
     def getGenericJsonModel(cls, item_name: str, properties_name: str, specific_suffix: str = "", organization=None) -> 'GenericJsonModel':
@@ -357,7 +399,7 @@ class GenericJsonModel:
         Returns:
             GenericJsonModel: Instance unique pour cette combinaison
         """
-        key = (item_name, properties_name, specific_suffix)
+        key = (item_name, properties_name, specific_suffix, organization.target_namespace, organization.target_ressource_root_relative_path)
         if key not in cls._instances:
             cls._instances[key] = cls(item_name, properties_name, specific_suffix, organization)
         return cls._instances[key]
@@ -476,6 +518,11 @@ class Organization:
             return re.fullmatch(canon_orig, canon_rel) is not None
         else:
             return canon_rel == canon_orig
+        
+    def has_conflict_with(self, other: 'Organization') -> bool:
+        if self.target_namespace == other.target_namespace and self.target_ressource_root_relative_path == other.target_ressource_root_relative_path:
+            return True
+        return False
 
     @staticmethod
     def get_organization(primary_path: str, secondary_path: str = None):
@@ -623,9 +670,11 @@ class CIT:
         self.original_components = {k: v for k, v in self.properties.items() if k.startswith("components")}
         
         # Partial reproduction of _nbt condition in CIT.convert()
+        pattern = r"^(.+)_nbt.*$"
         self.organization = None
-        if self.cit_name.endswith("_nbt"):
-            base_name = self.cit_name[:-4]
+        match = re.match(pattern, self.cit_name)
+        if match:
+            base_name = match.group(1)
             base_file = self.property_file_path.parent / f"{base_name}.properties"
             if base_file.exists():
                 self.organization = Organization.get_organization(base_file)
@@ -668,9 +717,6 @@ class CIT:
             cit.convert()
         cls.write_conversions(cit_to_convert)
         cls.generate_report(all_cits, duplicated_cit_names)
-        
-        # Copie du fichier pack.mcmeta
-        shutil.copy2('pack.mcmeta', OUTPUT_PATH / 'pack.mcmeta')
     
     @classmethod
     def generate_report(cls, all_cits: list['CIT'], duplicated_cit_names: dict[str, list[Path]]) -> None:
@@ -684,6 +730,19 @@ class CIT:
         report_path = Path('conversion_report.md')
         with open(report_path, 'w', encoding='utf-8') as f:
             f.write("# Rapport de conversion des CIT\n\n")
+            
+            # PNG dupliqués
+            duplicated_hash_list = {hash: paths for hash, paths in PNG._hash_cache.items() if len(paths) > 1}
+            if len(duplicated_hash_list) > 0:
+                print(f"Nombre de PNG dupliqués : {len(duplicated_hash_list)}")
+            f.write("## PNG dupliqués\n\n")
+            f.write(f"Nombre total : {len(duplicated_hash_list)}\n\n")
+            for hash, paths in duplicated_hash_list.items():
+                f.write(f"### {hash}\n\n")
+                f.write(f"Utilisé par {len(paths)} PNG :\n\n")
+                for path in paths:
+                    f.write(f"- {create_markdown_link(str(report_path), str(path))}\n")
+                f.write("\n")
             
             # CIT sans propriété 'items'
             if len(cls.cit_with_missing_items) > 0:
@@ -714,8 +773,8 @@ class CIT:
             
             # CIT avec fichier modèle manquant
             if len(cls.cit_model_file_not_found) > 0:
-                print(f"Nombre de CIT avec fichier modèle manquant : {len(cls.cit_model_file_not_found)}")
-            f.write("## CIT avec fichier modèle manquant\n\n")
+                print(f"Nombre de CIT avec fichier modèle manquant (non bloquant) : {len(cls.cit_model_file_not_found)}")
+            f.write("## CIT avec fichier modèle manquant (non bloquant)\n\n")
             f.write(f"Nombre total : {len(cls.cit_model_file_not_found)}\n\n")
             for path in cls.cit_model_file_not_found:
                 f.write(f"- {create_markdown_link(str(report_path), str(path))}\n")
@@ -821,9 +880,20 @@ class CIT:
         base_name = self.cit_name
         if not self.validate_before_conversion():
             return
+        
+        # Cas spécial : si cit_name finit par _icon et qu'un fichier .properties du même nom sans _icon existe à côté ou dans models, on détecte juste l'orphelin
+        if self.cit_name.endswith("_icon"):
+            base_name = self.cit_name[:-5]
+            base_file_1 = self.property_file_path.parent / f"{base_name}.properties"
+            base_file_2 = self.property_file_path.parent.parent / "models" / f"{base_name}.properties"
+            if not (base_file_1.exists() or base_file_2.exists()):
+                CIT.cit_icon_orphelin.append(self.property_file_path)
+        
         # Cas spécial : si cit_name finit par _nbt et qu'un fichier .properties du même nom sans _nbt existe à côté, alors on ne fait que add_conversions et return
-        if self.cit_name.endswith("_nbt"):
-            base_name = self.cit_name[:-4]
+        pattern = r"^(.+)_nbt.*$"
+        match = re.match(pattern, self.cit_name)
+        if match:
+            base_name = match.group(1)
             base_file = self.property_file_path.parent / f"{base_name}.properties"
             if base_file.exists():
                 self.add_conversions(
@@ -838,13 +908,6 @@ class CIT:
             else:
                 CIT.cit_nbt_orphelin.append(self.property_file_path)
                 return
-        # Cas spécial : si cit_name finit par _icon et qu'un fichier .properties du même nom sans _icon existe à côté ou dans models, on détecte juste l'orphelin
-        if self.cit_name.endswith("_icon"):
-            base_name = self.cit_name[:-5]
-            base_file_1 = self.property_file_path.parent / f"{base_name}.properties"
-            base_file_2 = self.property_file_path.parent.parent / "models" / f"{base_name}.properties"
-            if not (base_file_1.exists() or base_file_2.exists()):
-                CIT.cit_icon_orphelin.append(self.property_file_path)
                 
         # Initialisation de l'organisation pour tous les autres cas
         type_value = self.properties.get('type', '')
@@ -1073,6 +1136,70 @@ class CIT:
                     "property": "minecraft:using_item"
                 }
             }
+        elif self.item_list and "crossbow" in self.item_list:
+            suffixes = [
+                ["crossbow_standby", "crossbow"],
+                "crossbow_pulling_0",
+                "crossbow_pulling_1",
+                "crossbow_pulling_2",
+                "crossbow_arrow",
+                "crossbow_firework"
+            ]
+            models = {}
+            for suffix in suffixes:
+                if isinstance(suffix, list):
+                    key = suffix[0]
+                    result = None
+                    for s in suffix:
+                        result = self.convert_specific_model(s, organization)
+                        if result is not None:
+                            break
+                    if result is None:
+                        models[key] = {"model": {"type": "model", "model": "item/crossbow"}}    
+                    else:
+                        models[key] = result
+                else:
+                    result = self.convert_specific_model(suffix, organization)
+                    if result is None:
+                        models[suffix] = {"model": {"type": "model", "model": "item/crossbow"}}
+                    else:
+                        models[suffix] = result
+            return {
+                "model": {
+                    "type": "minecraft:select",
+                    "cases": [
+                        {
+                            "model": models["crossbow_arrow"]["model"],
+                            "when": "arrow"
+                        },
+                        {
+                            "model": models["crossbow_firework"]["model"],
+                            "when": "rocket"
+                        }
+                    ],
+                    "fallback": {
+                        "type": "minecraft:condition",
+                        "on_false": models["crossbow_standby"]["model"],
+                        "on_true": {
+                            "type": "minecraft:range_dispatch",
+                            "entries": [
+                                {
+                                    "model": models["crossbow_pulling_1"]["model"],
+                                    "threshold": 0.58
+                                },
+                                {
+                                    "model": models["crossbow_pulling_2"]["model"],
+                                    "threshold": 1.0
+                                }
+                            ],
+                            "fallback": models["crossbow_pulling_0"]["model"],
+                            "property": "minecraft:crossbow/pull"
+                        },
+                        "property": "minecraft:using_item"
+                    },
+                    "property": "minecraft:charge_type"
+                }
+            }
         elif self.item_list and "shield" in self.item_list:
             retour_blocking = self.convert_specific_model("shield_blocking", organization)
             retour_normal = self.convert_specific_model("", organization)
@@ -1124,6 +1251,9 @@ class CIT:
         Returns:
             bool: True si la conversion peut être effectuée, False sinon
         """
+        if self.model_file_not_found:
+            CIT.cit_model_file_not_found.append(self.property_file_path)
+            
         # Validation du type doit être la première
         if self.has_invalid_type:
             CIT.cit_with_invalid_type.append(self.property_file_path)
@@ -1139,10 +1269,6 @@ class CIT:
         
         if self.has_unspported_specific_model_property:
             CIT.cit_has_specific_model_property.append(self.property_file_path)
-            return False
-        
-        if self.model_file_not_found:
-            CIT.cit_model_file_not_found.append(self.property_file_path)
             return False
         
         if self.texture_file_not_found:
@@ -1206,7 +1332,7 @@ class CIT:
         - Vérifie la présence de la propriété 'stackSize'
         """
         self.has_items_property = 'items' in self.properties
-        supported_complex_items = ["bow", "elytra", "shield"]
+        supported_complex_items = ["bow", "elytra", "shield", "crossbow"]
         supported_complex_items_regex = [
             r".*_boots$",
             r".*_helmet$",
@@ -1435,6 +1561,9 @@ class CIT:
 
         with open("conversions.json", "w", encoding="utf-8") as f:
             json.dump(merged_list, f, ensure_ascii=False, indent=2)
+            
+        with open(OUTPUT_PATH / "output.json", "w", encoding="utf-8") as f:
+            json.dump(merged_list, f, ensure_ascii=False, indent=2)
 
 class Conversion:
     def __init__(self, item: str, original_components: dict[str, str], target_item_def: str, target_armor_def: str, target_armor_slot: str = None, is_elytra: bool = False):
@@ -1487,4 +1616,66 @@ class Conversion:
 
 if __name__ == '__main__':
     CIT.convert_all_cits()
-    # Les prints de statistiques sont maintenant dans generate_report
+    # Copie de PACK_HB/assets/minecraft/models/block
+    # vers OUTPUT_PATH/assets/minecraft/models/block
+    shutil.copytree("PACK_HB/assets/minecraft/models/block", OUTPUT_PATH / "assets/minecraft/models/block", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/models/item
+    # vers OUTPUT_PATH/assets/minecraft/models/item
+    shutil.copytree("PACK_HB/assets/minecraft/models/item", OUTPUT_PATH / "assets/minecraft/models/item", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/block
+    # vers OUTPUT_PATH/assets/minecraft/textures/block
+    shutil.copytree("PACK_HB/assets/minecraft/textures/block", OUTPUT_PATH / "assets/minecraft/textures/block", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/item
+    # vers OUTPUT_PATH/assets/minecraft/textures/item
+    shutil.copytree("PACK_HB/assets/minecraft/textures/item", OUTPUT_PATH / "assets/minecraft/textures/item", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/entity
+    # vers OUTPUT_PATH/assets/minecraft/textures/entity
+    shutil.copytree("PACK_HB/assets/minecraft/textures/entity", OUTPUT_PATH / "assets/minecraft/textures/entity", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/environment
+    # vers OUTPUT_PATH/assets/minecraft/textures/environment
+    shutil.copytree("PACK_HB/assets/minecraft/textures/environment", OUTPUT_PATH / "assets/minecraft/textures/environment", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/misc
+    # vers OUTPUT_PATH/assets/minecraft/textures/misc
+    shutil.copytree("PACK_HB/assets/minecraft/textures/misc", OUTPUT_PATH / "assets/minecraft/textures/misc", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/painting
+    # vers OUTPUT_PATH/assets/minecraft/textures/painting
+    shutil.copytree("PACK_HB/assets/minecraft/textures/painting", OUTPUT_PATH / "assets/minecraft/textures/painting", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/textures/font_conf
+    # vers OUTPUT_PATH/assets/minecraft/textures/font_conf
+    shutil.copytree("PACK_HB/assets/minecraft/textures/font_conf", OUTPUT_PATH / "assets/minecraft/textures/font_conf", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/sounds
+    # vers OUTPUT_PATH/assets/minecraft/sounds
+    shutil.copytree("PACK_HB/assets/minecraft/sounds", OUTPUT_PATH / "assets/minecraft/sounds", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/texts
+    # vers OUTPUT_PATH/assets/minecraft/texts
+    shutil.copytree("PACK_HB/assets/minecraft/texts", OUTPUT_PATH / "assets/minecraft/texts", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/lang
+    # vers OUTPUT_PATH/assets/minecraft/lang
+    shutil.copytree("PACK_HB/assets/minecraft/lang", OUTPUT_PATH / "assets/minecraft/lang", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/font
+    # vers OUTPUT_PATH/assets/minecraft/font
+    shutil.copytree("PACK_HB/assets/minecraft/font", OUTPUT_PATH / "assets/minecraft/font", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/minecraft/blockstates
+    # vers OUTPUT_PATH/assets/minecraft/blockstates
+    shutil.copytree("PACK_HB/assets/minecraft/blockstates", OUTPUT_PATH / "assets/minecraft/blockstates", dirs_exist_ok=True)
+    # Pour chaque fichier dans PACK_HB/assets/minecraft/textures/models/armor
+    # si finit par _layer_1.png, alors copie vers OUTPUT_PATH/assets/minecraft/textures/equipment/humanoid
+    # sinon si finit par _layer_2.png, alors copie vers OUTPUT_PATH/assets/minecraft/textures/equipment/humanoid_leggings
+    for file in Path("PACK_HB/assets/minecraft/textures/models/armor").glob("*.png"):
+        if file.stem.endswith("_layer_1"):
+            (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid").mkdir(parents=True, exist_ok=True)
+            shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid" / file.name)
+        elif file.stem.endswith("_layer_2"):
+            (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings").mkdir(parents=True, exist_ok=True)
+            shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings" / file.name)
+    # Copie de PACK_HB/assets/herobrine
+    # vers OUTPUT_PATH/assets/herobrine
+    shutil.copytree("PACK_HB/assets/herobrine", OUTPUT_PATH / "assets/herobrine", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/fabricskyboxes
+    # vers OUTPUT_PATH/assets/fabricskyboxes
+    shutil.copytree("PACK_HB/assets/fabricskyboxes", OUTPUT_PATH / "assets/fabricskyboxes", dirs_exist_ok=True)
+    # Copie de PACK_HB/assets/space
+    # vers OUTPUT_PATH/assets/space
+    shutil.copytree("PACK_HB/assets/space", OUTPUT_PATH / "assets/space", dirs_exist_ok=True)
+    
+    

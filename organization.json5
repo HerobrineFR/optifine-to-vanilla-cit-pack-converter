@@ -8,6 +8,60 @@
   ],
   "file_mapping_regex": [
     ////////////////////////////////
+    // Assets minecraft
+    ////////////////////////////////
+    {
+      "original_path": "assets/minecraft/models/block/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "models/block"
+    },
+    {
+      "original_path": "assets/minecraft/models/item/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "models/item"
+    },
+    {
+      "original_path": "assets/minecraft/textures/block/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "textures/block"
+    },
+    {
+      "original_path": "assets/minecraft/textures/entity/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "textures/entity"
+    },
+    {
+      "original_path": "assets/minecraft/textures/item/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "textures/item"
+    },
+    {
+      "original_path": "assets/minecraft/textures/environment/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "textures/environment"
+    },
+    {
+      "original_path": "assets/minecraft/textures/models/armor/.*_layer_1.png",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "equipment/humanoid"
+    },
+    {
+      "original_path": "assets/minecraft/textures/models/armor/.*_layer_2.png",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "equipment/humanoid_leggings"
+    },
+    {
+      "original_path": "assets/minecraft/textures/painting/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "painting"
+    },
+    {
+      "original_path": "assets/minecraft/textures/misc/.*",
+      "target_namespace": "minecraft",
+      "target_ressource_root_relative_path": "misc"
+    },
+    
+    ////////////////////////////////
     // Sous catégories herobrine
     ////////////////////////////////
     {
@@ -41,14 +95,9 @@
       "target_ressource_root_relative_path": "tableaux"
     },
     {
-      "original_path": "assets/minecraft/optifine/cit/general/outils/reliques/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "reliques_TOREVIEW"
-    },
-    {
       "original_path": "assets/minecraft/optifine/cit/general/outils/instruments_musique/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "instruments_musique"
+      "target_ressource_root_relative_path": "musique"
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/outils/pieces/.*",
@@ -61,6 +110,136 @@
       "target_ressource_root_relative_path": "utilitaires"
     },
     {
+      "original_path": "assets/minecraft/optifine/cit/general/combat/armes/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "combat/armes"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/combat/armures/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "combat/armures"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/combat/boucliers/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "combat/boucliers"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/combat/carquois/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "combat/carquois"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/combat/fourreaux/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "combat/fourreaux"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/vetements/tenues_grade/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "vetements/tenues_grade"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/vetements/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "vetements"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/reliques/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "reliques"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/decoration/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "decoration"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/bijoutier/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/bijoutier"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/couturier/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/couturier"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/cuisine/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/cuisine"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/forge/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/forge"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/maroquinerie/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/maroquinerie"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/menuiserie/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat/menuiserie"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/artisanat/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "artisanat"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/creatures/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "creatures"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/autre/npc/fire_claymores/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "npc/fire_claymores"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/autre/npc/npc_s/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "npc/npc_s"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/autre/vanilla/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "vanilla"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/autre/void/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "void"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/sages/seberus/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "sages/seberus"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/quadra/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "quadra"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/common/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "common"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/source_models/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "common"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/general/corps/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "corps"
+    },
+    {
       "original_path": "assets/minecraft/optifine/cit/gui/.*",
       "target_namespace": "herobrine",
       "target_ressource_root_relative_path": "gui"
@@ -68,11 +247,85 @@
     {
       "original_path": "assets/minecraft/optifine/cit/staff/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "player_specific"
+      "target_ressource_root_relative_path": "persos"
+    },
+    {
+      "original_path": "assets/minecraft/optifine/cit/joueurs/.*",
+      "target_namespace": "herobrine",
+      "target_ressource_root_relative_path": "persos"
+    },
+
+
+    ////////////////////////////////
+    // Sous catégories de guildes: division_cristalline
+    ////////////////////////////////
+    // Elferyde
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/division_cristalline/membres/elferyde/.*",
+      "target_namespace": "division_cristalline",
+      "target_ressource_root_relative_path": "membres/elferyde"
+    },
+    // Humain
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/division_cristalline/membres/humain/.*",
+      "target_namespace": "division_cristalline",
+      "target_ressource_root_relative_path": "membres/humain"
+    },
+    // Onyx
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/division_cristalline/membres/onyx/.*",
+      "target_namespace": "division_cristalline",
+      "target_ressource_root_relative_path": "membres/onyx"
     },
 
     ////////////////////////////////
-    // Namespaces de divers par défaut
+    // Sous catégories de guildes: révérence
+    ////////////////////////////////
+    // Armes
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/armes/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "armes"
+    },
+    // Armures
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/armures/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "armures"
+    },
+    // Marteaux
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/marteaux/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "marteaux"
+    },
+    // Objets
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/objets/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "objets"
+    },
+    // Outils
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/outils/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "outils"
+    },
+    // Potions
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/potions/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "potions"
+    },
+    // Ressources
+    {
+      "original_path": "assets/minecraft/optifine/cit/guildes/harde/ressources/.*",
+      "target_namespace": "reverence",
+      "target_ressource_root_relative_path": "ressources"
+    },
+
+    ////////////////////////////////
+    // Namespaces divers par défaut
     ////////////////////////////////
     {
       "original_path": "assets/miniaturia/.*",
@@ -80,18 +333,8 @@
       "target_ressource_root_relative_path": "."
     },
     {
-      "original_path": "assets/modelengine/.*",
-      "target_namespace": "modelengine_TOREVIEW",
-      "target_ressource_root_relative_path": "."
-    },
-    {
-      "original_path": "assets/space/.*",
-      "target_namespace": "space_TOREVIEW",
-      "target_ressource_root_relative_path": "."
-    },
-    {
       "original_path": "assets/cocricot/.*",
-      "target_namespace": "cocricot_TOREVIEW",
+      "target_namespace": "cocricot",
       "target_ressource_root_relative_path": "."
     },
     
@@ -115,17 +358,17 @@
     },
     {
       "original_path": "assets/minecraft/optifine/cit/guildes/garde/.*",
-      "target_namespace": "garde",
+      "target_namespace": "confrerie",
       "target_ressource_root_relative_path": "."
     },
     {
       "original_path": "assets/minecraft/optifine/cit/guildes/sacerdoce/.*",
-      "target_namespace": "sacerdoce",
+      "target_namespace": "phalanstere",
       "target_ressource_root_relative_path": "."
     },
     {
       "original_path": "assets/minecraft/optifine/cit/guildes/harde/.*",
-      "target_namespace": "harde",
+      "target_namespace": "reverence",
       "target_ressource_root_relative_path": "."
     },
     {
@@ -135,7 +378,7 @@
     },
     {
       "original_path": "assets/minecraft/optifine/cit/guildes/compagnie/.*",
-      "target_namespace": "compagnie",
+      "target_namespace": "ocean",
       "target_ressource_root_relative_path": "."
     },
     {
