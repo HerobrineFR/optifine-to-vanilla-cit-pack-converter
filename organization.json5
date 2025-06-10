@@ -77,17 +77,12 @@
     {
       "original_path": "assets/minecraft/optifine/cit/general/nourriture/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "nourriture"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/drogues/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "drogue"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/drogues/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "drogues"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/tableaux/.*",
@@ -97,17 +92,17 @@
     {
       "original_path": "assets/minecraft/optifine/cit/general/outils/instruments_musique/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "musique"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/outils/pieces/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "monnaies"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/outils/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "utilitaires"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/combat/armes/.*",
@@ -137,17 +132,17 @@
     {
       "original_path": "assets/minecraft/optifine/cit/general/vetements/tenues_grade/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "vetements/tenues_grade"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/vetements/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "vetements"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/reliques/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "reliques"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/decoration/.*",
@@ -155,39 +150,9 @@
       "target_ressource_root_relative_path": "decoration"
     },
     {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/bijoutier/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/bijoutier"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/couturier/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/couturier"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/cuisine/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/cuisine"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/forge/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/forge"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/maroquinerie/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/maroquinerie"
-    },
-    {
-      "original_path": "assets/minecraft/optifine/cit/general/artisanat/menuiserie/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat/menuiserie"
-    },
-    {
       "original_path": "assets/minecraft/optifine/cit/general/artisanat/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "artisanat"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/general/creatures/.*",
@@ -215,14 +180,9 @@
       "target_ressource_root_relative_path": "void"
     },
     {
-      "original_path": "assets/minecraft/optifine/cit/sages/seberus/.*",
-      "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "sages/seberus"
-    },
-    {
       "original_path": "assets/minecraft/optifine/cit/quadra/.*",
       "target_namespace": "herobrine",
-      "target_ressource_root_relative_path": "quadra"
+      "target_ressource_root_relative_path": ""
     },
     {
       "original_path": "assets/minecraft/optifine/cit/common/.*",
