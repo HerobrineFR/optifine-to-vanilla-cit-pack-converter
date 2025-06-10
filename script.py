@@ -993,9 +993,19 @@ class CIT:
             convert_layer_2 = PNG.getPNG(layer2_path).convert(destination="equip_humanoid_leggings")
         layers = {}
         if convert_layer_2:
-            layers["humanoid_leggings"] = [{"texture": convert_layer_2}]
+            if self.item_list and "leather_boots" in self.item_list or "leather_leggings" in self.item_list or "leather_chestplate" in self.item_list or "leather_helmet" in self.item_list:
+                layers["humanoid_leggings"] = [{"texture": convert_layer_2, "dyeable": {
+                    "color_when_undyed": -6265536
+                }}]
+            else:
+                layers["humanoid_leggings"] = [{"texture": convert_layer_2}]
         if convert_layer_1:
-            layers["humanoid"] = [{"texture": convert_layer_1}]
+            if self.item_list and "leather_boots" in self.item_list or "leather_leggings" in self.item_list or "leather_chestplate" in self.item_list or "leather_helmet" in self.item_list:
+                layers["humanoid"] = [{"texture": convert_layer_1, "dyeable": {
+                    "color_when_undyed": -6265536
+                }}]
+            else:
+                layers["humanoid"] = [{"texture": convert_layer_1}]
         equipment_json = {"layers": layers}
         output_path = organization.get_equipment_def_path(f"{self.cit_name}.json")
         output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1042,11 +1052,12 @@ class CIT:
                 self.json_model_error = e
                 CIT.cit_with_json_model_error[self.property_file_path] = e
                 return None
+        return_model = None
         if self.original_json_model_files_paths.get(model_suffix) is not None:
             try:
                 json_model = JsonModel.getJsonModel(self.original_json_model_files_paths.get(model_suffix), model_suffix)
                 model_ref = json_model.convert(texture_override)
-                return {
+                return_model = {
                     "model": {
                         "type": "model",
                         "model": model_ref
@@ -1060,7 +1071,7 @@ class CIT:
             try:
                 json_model = JsonModel.getJsonModel(self.original_json_model_files_paths.get(""), model_suffix)
                 model_ref = json_model.convert(texture_override)
-                return {
+                return_model = {
                     "model": {
                         "type": "model",
                         "model": model_ref
@@ -1074,7 +1085,7 @@ class CIT:
             try:
                 generic_model = GenericJsonModel.getGenericJsonModel(self.item_list[0], self.cit_name, model_suffix, organization)
                 model_ref = generic_model.convert(texture_override)
-                return {
+                return_model = {
                     "model": {
                         "type": "model",
                         "model": model_ref
@@ -1084,7 +1095,16 @@ class CIT:
                 self.json_model_error = e
                 CIT.cit_with_json_model_error[self.property_file_path] = e
                 return None
-        return None
+        if return_model is None:
+            return None
+        if self.item_list and "leather_boots" in self.item_list or "leather_leggings" in self.item_list or "leather_chestplate" in self.item_list or "leather_helmet" in self.item_list:
+            return_model["model"]["tints"] = [
+                {
+                    "type": "minecraft:dye",
+                    "default": -6265536
+                }
+            ]
+        return return_model
 
     def convert_specific_cit(self, organization=None) -> dict | None:
         """
@@ -1662,12 +1682,16 @@ if __name__ == '__main__':
     # si finit par _layer_1.png, alors copie vers OUTPUT_PATH/assets/minecraft/textures/equipment/humanoid
     # sinon si finit par _layer_2.png, alors copie vers OUTPUT_PATH/assets/minecraft/textures/equipment/humanoid_leggings
     for file in Path("PACK_HB/assets/minecraft/textures/models/armor").glob("*.png"):
-        if file.stem.endswith("_layer_1"):
-            (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid").mkdir(parents=True, exist_ok=True)
-            shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid" / file.name)
-        elif file.stem.endswith("_layer_2"):
-            (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings").mkdir(parents=True, exist_ok=True)
-            shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings" / file.name)
+        match = re.match(r"^(.*)_layer_(1|2)$", file.stem)
+        if match:
+            base_name = match.group(1)
+            layer = match.group(2)
+            if layer == "1":
+                (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid").mkdir(parents=True, exist_ok=True)
+                shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid" / f"{base_name}.png")
+            elif layer == "2":
+                (OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings").mkdir(parents=True, exist_ok=True)
+                shutil.copy(file, OUTPUT_PATH / "assets/minecraft/textures/equipment/humanoid_leggings" / f"{base_name}.png")
     # Copie de PACK_HB/assets/herobrine
     # vers OUTPUT_PATH/assets/herobrine
     shutil.copytree("PACK_HB/assets/herobrine", OUTPUT_PATH / "assets/herobrine", dirs_exist_ok=True)
